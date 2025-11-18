@@ -3,68 +3,131 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AI Chat Agent dengan Notion</title>
+    <title>Agent AI Chat</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 0; background: #f5f5f5; }
-        #chatbox { max-width: 600px; margin: 2rem auto; background: white; border-radius: 8px; box-shadow: 0 0 10px #ccc; padding: 1rem; }
-        #messages { height: 400px; overflow-y: auto; border: 1px solid #ddd; border-radius: 4px; padding: 1rem; background: #fafafa; }
-        .message { margin-bottom: 1rem; }
-        .user { text-align: right; }
-        .user .text { display: inline-block; background: #007bff; color: white; padding: 0.5rem 1rem; border-radius: 15px; }
-        .bot .text { display: inline-block; background: #eee; color: #333; padding: 0.5rem 1rem; border-radius: 15px; }
-        #inputForm { margin-top: 1rem; display: flex; }
-        #inputForm input { flex: 1; padding: 0.5rem; font-size: 1rem; border-radius: 4px; border: 1px solid #ccc; }
-        #inputForm button { background: #007bff; border: none; color: white; padding: 0 1rem; margin-left: 0.5rem; border-radius: 4px; cursor: pointer; }
-        #inputForm button:hover { background: #0056b3; }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f3f6fa;
+            margin: 0;
+            padding: 0;
+        }
+        #chatbox {
+            max-width: 450px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 0 16px #c0d3ea55;
+            padding: 2rem 1rem 1rem 1rem;
+        }
+        #chatbox h2 {
+            text-align: center;
+            margin-top: 0;
+            color: #2196f3;
+        }
+        #messages {
+            height: 380px;
+            overflow-y: auto;
+            border: 1px solid #e0e7ef;
+            border-radius: 7px;
+            padding: 15px;
+            background: #f6fafd;
+            margin-bottom: 14px;
+        }
+        .message {
+            margin-bottom: 18px;
+            display: flex;
+        }
+        .user {
+            justify-content: flex-end;
+        }
+        .bot {
+            justify-content: flex-start;
+        }
+        .user .text {
+            background: #2196f3;
+            color: white;
+            padding: 11px 22px;
+            border-radius: 18px;
+            text-align: right;
+            max-width: 70%;
+            margin-left: auto;
+        }
+        .bot .text {
+            background: #e3ebf5;
+            color: #333;
+            padding: 11px 22px;
+            border-radius: 18px;
+            text-align: left;
+            max-width: 70%;
+            margin-right: auto;
+        }
+        #inputForm {
+            display: flex;
+            gap: 8px;
+        }
+        #userInput {
+            flex: 1;
+            font-size: 1rem;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #c8d7ed;
+        }
+        #inputForm button {
+            background: #2196f3;
+            border: none;
+            color: white;
+            padding: 0 1.3rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        #inputForm button:hover {
+            background: #1565c0;
+        }
     </style>
 </head>
 <body>
+    <div id="chatbox">
+        <h2>Agent AI Chat</h2>
+        <div id="messages"></div>
+        <form id="inputForm">
+            <input type="text" id="userInput" autocomplete="off" placeholder="Tulis pertanyaan..." required />
+            <button type="submit">Kirim</button>
+        </form>
+    </div>
 
-<div id="chatbox">
-    <div id="messages"></div>
-    <form id="inputForm">
-        <input type="text" id="userInput" autocomplete="off" placeholder="Tulis pertanyaan..." required />
-        <button type="submit">Kirim</button>
-    </form>
-</div>
+    <script>
+        const messagesContainer = document.getElementById('messages');
+        const form = document.getElementById('inputForm');
+        const input = document.getElementById('userInput');
 
-<script>
-    const messagesContainer = document.getElementById('messages');
-    const form = document.getElementById('inputForm');
-    const input = document.getElementById('userInput');
+        function addMessage(text, sender) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender);
+            const textSpan = document.createElement('span');
+            textSpan.classList.add('text');
+            textSpan.textContent = text;
+            messageDiv.appendChild(textSpan);
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
 
-    // Fungsi menampilkan pesan di chat
-    function addMessage(text, sender) {
-        const messageDiv = document.createElement('div');
-        messageDiv.classList.add('message', sender);
-        const textSpan = document.createElement('span');
-        textSpan.classList.add('text');
-        textSpan.textContent = text;
-        messageDiv.appendChild(textSpan);
-        messagesContainer.appendChild(messageDiv);
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
+        function getBotResponse(userMessage) {
+            // Balasan bot statis dulu, bisa diganti dengan fetch ke backend AI nanti
+            return "Saya AI Agent demo. Anda mengetik: " + userMessage;
+        }
 
-    // Kalau ingin langsung tes respons statis (sebagai contoh)
-    function getBotResponse(userMessage) {
-        // Untuk contoh, balasan statis:
-        return "Maaf, saya belum terhubung ke backend AI. Anda bertanya: " + userMessage;
-    }
-
-    form.addEventListener('submit', function(event) {
-        event.preventDefault();
-        const userText = input.value.trim();
-        if (userText === '') return;
-        addMessage(userText, 'user');
-        input.value = '';
-
-        // Respons bot
-        const botResponse = getBotResponse(userText);
-        setTimeout(() => {
-            addMessage(botResponse, 'bot');
-        }, 500);
-    });
-</script>
-
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const userText = input.value.trim();
+            if (userText === '') return;
+            addMessage(userText, 'user');
+            input.value = '';
+            setTimeout(() => {
+                const botResponse = getBotResponse(userText);
+                addMessage(botResponse, 'bot');
+            }, 500);
+        });
+    </script>
 </body>
 </html>
